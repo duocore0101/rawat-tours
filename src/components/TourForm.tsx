@@ -13,20 +13,57 @@ export default function TourForm({ tour }: { tour?: Tour }) {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     title: tour?.title || '',
-    location: tour?.location || '',
     price: tour?.price || 0,
     duration: tour?.duration || '',
     description: tour?.description || '',
     image_url: tour?.image_url || '',
   })
+  const [files, setFiles] = useState<File[]>([])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
+    let finalImageUrl = formData.image_url
+
+    if (files.length > 0) {
+      const uploadedUrls = []
+      for (const file of files) {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`
+        
+        const { error: uploadError, data } = await supabase.storage
+          .from('tours')
+          .upload(fileName, file)
+          
+        if (uploadError) {
+          alert(`Error uploading image: ${uploadError.message}. Make sure the bucket 'tours' exists and has INSERT policies!`)
+          setLoading(false)
+          return
+        }
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('tours')
+          .getPublicUrl(fileName)
+          
+        uploadedUrls.push(publicUrl)
+      }
+      
+      if (uploadedUrls.length > 0) {
+        // Append new URLs to existing ones, or replace if empty
+        finalImageUrl = finalImageUrl ? `${finalImageUrl},${uploadedUrls.join(',')}` : uploadedUrls.join(',')
+      }
+    }
+
+    if (finalImageUrl) {
+      finalImageUrl = finalImageUrl.split(',').filter(u => !u.includes('istockphoto.com')).join(',')
+    }
+
     const payload = {
       ...formData,
+      image_url: finalImageUrl,
       price: Number(formData.price),
+      location: tour?.location || 'Not Specified', // Provide fallback for NOT NULL constraint
     }
 
     let error
@@ -76,22 +113,7 @@ export default function TourForm({ tour }: { tour?: Tour }) {
           </div>
         </div>
 
-        {/* Location */}
-        <div>
-          <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Location</label>
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              name="location"
-              required
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="Manali, Himachal Pradesh"
-              className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary/50 text-sm transition-all"
-            />
-          </div>
-        </div>
+
 
         {/* Price */}
         <div>
@@ -126,20 +148,57 @@ export default function TourForm({ tour }: { tour?: Tour }) {
           </div>
         </div>
 
-        {/* Image URL */}
-        <div>
-          <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Image URL</label>
+        {/* Images */}
+        <div className="md:col-span-2">
+          <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Tour Media (Photos & Videos)</label>
           <div className="relative">
-            <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
-              type="text"
-              name="image_url"
-              value={formData.image_url}
-              onChange={handleChange}
-              placeholder="https://images.unsplash.com/..."
-              className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+              type="file"
+              multiple
+              accept="image/*,video/*"
+              onChange={(e) => {
+                if (e.target.files) {
+                  const newFiles = Array.from(e.target.files);
+                  setFiles(prev => [...prev, ...newFiles]);
+                }
+              }}
+              className="w-full bg-white dark:bg-slate-800 border border-dashed border-gray-300 dark:border-slate-600 rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary/50 text-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
             />
           </div>
+          {files.length > 0 && (
+            <p className="mt-2 text-xs font-semibold text-emerald-600">{files.length} new file(s) selected to upload</p>
+          )}
+
+          {formData.image_url && (
+            <div className="mt-4">
+              <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Currently Saved Media</p>
+              <div className="flex flex-wrap gap-3">
+                {formData.image_url.split(',').filter(u => u).map((url, i) => {
+                  const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/) || url.includes('video');
+                  return (
+                    <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm group">
+                      {isVideo ? (
+                         <video src={url} className="w-full h-full object-cover" />
+                      ) : (
+                         // eslint-disable-next-line @next/next/no-img-element
+                         <img src={url} alt="" className="w-full h-full object-cover" />
+                      )}
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          const newUrls = formData.image_url.split(',').filter((_, index) => index !== i).join(',');
+                          setFormData(prev => ({...prev, image_url: newUrls}));
+                        }}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Description */}

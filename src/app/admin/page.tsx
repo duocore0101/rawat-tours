@@ -28,7 +28,7 @@ export default async function AdminDashboardPage() {
   const { data: tours } = await supabase.from('tours').select('*')
   const { data: bookings } = await supabase.from('bookings').select('*, tour:tours(price)')
 
-  const totalRevenue = bookings?.reduce((acc, b: any) => acc + (b.tour?.price * b.people), 0) || 0
+  const totalRevenue = bookings?.filter(b => b.status === 'confirmed').reduce((acc, b: any) => acc + (b.tour?.price * b.people), 0) || 0
   const activeBookings = bookings?.filter(b => b.status === 'confirmed').length || 0
   const pendingBookings = bookings?.filter(b => b.status === 'pending').length || 0
 
@@ -38,7 +38,7 @@ export default async function AdminDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-              <h1 className="text-5xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Admin Console</h1>
+              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Admin Console</h1>
               <p className="text-secondary font-medium tracking-wide uppercase text-[10px]">Rawat Tours & Travels Management</p>
             </div>
             <Link
@@ -54,11 +54,11 @@ export default async function AdminDashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard title="Total Revenue" value={`₹${totalRevenue.toLocaleString()}`} icon={<DollarSign className="text-emerald-500" />} change="+12%" />
-          <StatCard title="Total Tours" value={tours?.length || 0} icon={<MapIcon className="text-blue-500" />} />
-          <StatCard title="Active Bookings" value={activeBookings} icon={<CheckCircle className="text-emerald-500" />} />
-          <StatCard title="Pending" value={pendingBookings} icon={<Clock className="text-amber-500" />} />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
+          <StatCard href="/admin/revenue" title="Total Revenue" value={`₹${totalRevenue.toLocaleString()}`} icon={<DollarSign className="text-emerald-500 w-4 h-4 sm:w-5 sm:h-5" />} change="+12%" />
+          <StatCard href="/admin/tours" title="Total Tours" value={tours?.length || 0} icon={<MapIcon className="text-blue-500 w-4 h-4 sm:w-5 sm:h-5" />} />
+          <StatCard href="/admin/bookings/active" title="Active Bookings" value={activeBookings} icon={<CheckCircle className="text-emerald-500 w-4 h-4 sm:w-5 sm:h-5" />} />
+          <StatCard href="/admin/bookings" title="Pending" value={pendingBookings} icon={<Clock className="text-amber-500 w-4 h-4 sm:w-5 sm:h-5" />} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -114,7 +114,12 @@ export default async function AdminDashboardPage() {
                 <div key={tour.id} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-2xl border border-gray-50 dark:border-slate-800 hover:border-primary/30 transition-all">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl overflow-hidden relative border border-gray-100">
-                      <Image src={tour.image_url} alt="" fill className="object-cover" />
+                        <Image 
+                          src={tour.image_url?.split(',').find((u: string) => u && !u.includes('istockphoto.com')) || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'} 
+                          alt="" 
+                          fill 
+                          className="object-cover" 
+                        />
                     </div>
                     <div>
                       <p className="text-sm font-bold truncate max-w-[120px]">{tour.title}</p>
@@ -140,23 +145,37 @@ export default async function AdminDashboardPage() {
   )
 }
 
-function StatCard({ title, value, icon, change }: { title: string, value: any, icon: React.ReactNode, change?: string }) {
-  return (
-    <div className="glass bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 shadow-sm border border-white hover:shadow-md transition-all">
-      <div className="flex justify-between items-start mb-4">
-        <div className="p-3 bg-muted/50 dark:bg-slate-800 rounded-2xl">
+function StatCard({ title, value, icon, change, href }: { title: string, value: any, icon: React.ReactNode, change?: string, href?: string }) {
+  const content = (
+    <>
+      <div className="flex justify-between items-start mb-3 sm:mb-4">
+        <div className="p-2 sm:p-3 bg-muted/50 dark:bg-slate-800 rounded-xl sm:rounded-2xl group-hover:scale-110 transition-transform">
           {icon}
         </div>
         {change && (
-          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-lg">
+          <span className="text-[9px] sm:text-[10px] font-bold text-emerald-600 bg-emerald-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg">
             {change}
           </span>
         )}
       </div>
       <div>
-        <p className="text-[10px] uppercase tracking-widest text-secondary font-bold mb-1">{title}</p>
-        <p className="text-3xl font-extrabold text-gray-900 dark:text-white">{value}</p>
+        <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-secondary font-bold mb-1 line-clamp-1">{title}</p>
+        <p className="text-xl sm:text-3xl font-extrabold text-gray-900 dark:text-white truncate">{value}</p>
       </div>
+    </>
+  )
+
+  if (href) {
+    return (
+      <Link href={href} className="glass bg-white/80 dark:bg-slate-900/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-white hover:shadow-xl hover:-translate-y-1 hover:border-primary/20 transition-all group block">
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <div className="glass bg-white/80 dark:bg-slate-900/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-white hover:shadow-md transition-all">
+      {content}
     </div>
   )
 }

@@ -1,16 +1,45 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { updateBookingStatus } from '@/app/admin/bookings/actions'
 import { Check, X, Loader2 } from 'lucide-react'
 
-export default function BookingActions({ bookingId, status }: { bookingId: string, status: string }) {
+interface BookingActionsProps {
+  bookingId: string
+  status: string
+  bookingData: {
+    customer_name: string
+    customer_phone: string
+    tour_title: string
+    date: string
+    people: number
+    price: number
+  }
+}
+
+export default function BookingActions({ bookingId, status, bookingData }: BookingActionsProps) {
   const [loading, setLoading] = useState<string | null>(null)
+  const router = useRouter()
 
   const handleUpdate = async (newStatus: 'confirmed' | 'cancelled') => {
     setLoading(newStatus)
     try {
       await updateBookingStatus(bookingId, newStatus)
+      router.refresh()
+      
+      if (newStatus === 'confirmed') {
+        const message = encodeURIComponent(
+          `✅ *Booking Confirmed!* ✅\n\n` +
+          `Hello *${bookingData.customer_name}*,\n` +
+          `We have received your payment. Your booking for *${bookingData.tour_title}* is now officially **CONFIRMED**!\n\n` +
+          `📅 *Date:* ${new Date(bookingData.date).toLocaleDateString()}\n` +
+          `👥 *Travelers:* ${bookingData.people}\n` +
+          `💰 *Total Amount:* ₹${(bookingData.price * bookingData.people).toLocaleString()} (Paid)\n\n` +
+          `Thank you for choosing *Rawat Tours & Travels*! We look forward to seeing you.`
+        )
+        window.open(`https://wa.me/${bookingData.customer_phone.replace(/[^0-9]/g, '')}?text=${message}`, '_blank')
+      }
     } catch (error) {
       alert('Failed to update status')
     } finally {

@@ -16,5 +16,6 @@ export async function updateBookingStatus(bookingId: string, status: 'confirmed'
   }
 
   revalidatePath('/admin/bookings')
+  revalidatePath('/admin/bookings/active')
   revalidatePath('/admin')
 }

@@ -36,14 +36,14 @@ export default function Navbar() {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-3 group transition-all">
-              <div className="bg-primary p-2.5 rounded-2xl group-hover:scale-110 group-hover:rotate-3 transition-all shadow-xl shadow-primary/20">
-                <Bus className="h-7 w-7 text-white" />
+              <div className="bg-primary p-2 sm:p-2.5 rounded-xl sm:rounded-2xl group-hover:scale-110 group-hover:rotate-3 transition-all shadow-xl shadow-primary/20">
+                <Bus className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-600 to-indigo-900 dark:from-primary dark:to-white">
+                <span className="text-xl sm:text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-600 to-indigo-900 dark:from-primary dark:to-white">
                   RAWAT TOURS
                 </span>
-                <span className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-secondary/80">
+                <span className="text-[8px] sm:text-[10px] font-extrabold uppercase tracking-[0.3em] text-secondary/80">
                   And Travels
                 </span>
               </div>
@@ -124,6 +124,16 @@ export default function Navbar() {
                 >
                   My Bookings
                 </Link>
+                {user.email === 'duocore0101@gmail.com' && (
+                  <Link 
+                    href="/admin" 
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-accent hover:bg-muted transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span>Admin Panel</span>
+                  </Link>
+                )}
                 <button
                   onClick={() => {
                     handleLogout()

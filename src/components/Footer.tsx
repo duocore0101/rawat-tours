@@ -61,12 +61,19 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-secondary">
+        <div className="mt-8 sm:mt-12 pt-8 border-t border-gray-100 dark:border-slate-900 flex flex-col sm:flex-row justify-between items-center gap-8 sm:gap-0">
+          <p className="text-xs sm:text-sm text-secondary text-center sm:text-left w-full sm:w-auto">
             &copy; {new Date().getFullYear()} Rawat Tours and Travels. All rights reserved.
           </p>
-          <div className="mt-4 md:mt-0 flex space-x-6">
-            <span className="text-xs text-secondary">Made with ❤️ for Travelers</span>
+          <div className="w-full sm:w-auto flex justify-center sm:justify-end">
+            <a href="https://www.duocoresoftware.com/" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 group justify-center sm:justify-end">
+              <img src="/logo.jpeg" alt="Duocore Software Logo" className="w-8 h-8 sm:w-8 sm:h-8 object-contain rounded group-hover:scale-110 transition-transform" />
+              <div className="flex flex-col sm:block text-left sm:text-right">
+                <span className="text-xs sm:text-base text-secondary group-hover:text-primary transition-colors leading-tight sm:leading-normal">
+                  Developed by <span className="font-bold text-sm sm:text-base block sm:inline mt-0.5 sm:mt-0">Duocore Software Company</span>
+                </span>
+              </div>
+            </a>
           </div>
         </div>
       </div>

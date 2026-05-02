@@ -43,7 +43,7 @@ export default async function MyBookingsPage() {
                 {/* Tour Image Thumbnail */}
                 <div className="relative h-40 w-full md:w-64 rounded-2xl overflow-hidden flex-shrink-0">
                   <Image
-                    src={booking.tour?.image_url || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'}
+                    src={booking.tour?.image_url?.split(',')?.find((u: string) => u && !u.includes('istockphoto.com')) || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'}
                     alt={booking.tour?.title || 'Tour'}
                     fill
                     className="object-cover"

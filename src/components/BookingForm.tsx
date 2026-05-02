@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Calendar, Users, CheckCircle2, Loader2 } from 'lucide-react'
+import { Calendar, Users, CheckCircle2, Loader2, User, Phone } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-export default function BookingForm({ tourId, price }: { tourId: string, price: number }) {
+export default function BookingForm({ tourId, price, tourTitle }: { tourId: string, price: number, tourTitle: string }) {
   const [date, setDate] = useState('')
   const [people, setPeople] = useState(1)
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -30,6 +32,8 @@ export default function BookingForm({ tourId, price }: { tourId: string, price: 
     const { error } = await supabase.from('bookings').insert({
       tour_id: tourId,
       user_id: user.id,
+      customer_name: name,
+      customer_phone: phone,
       date,
       people,
       status: 'pending'
@@ -49,26 +53,58 @@ export default function BookingForm({ tourId, price }: { tourId: string, price: 
         <div className="inline-flex items-center justify-center p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mb-4">
           <CheckCircle2 className="h-8 w-8 text-emerald-600" />
         </div>
-        <h3 className="text-xl font-bold text-emerald-900 dark:text-emerald-400 mb-2">Booking Requested!</h3>
-        <p className="text-emerald-700 dark:text-emerald-500 text-sm mb-6">Your adventure is one step closer. We'll notify you once confirmed.</p>
-        <button 
-          onClick={() => router.push('/my-bookings')}
-          className="bg-emerald-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-emerald-700 transition-all"
-        >
-          View My Bookings
-        </button>
+        <h3 className="text-xl font-bold text-emerald-900 dark:text-emerald-400 mb-2">Booking Confirmed!</h3>
+        <p className="text-emerald-700 dark:text-emerald-500 text-sm mb-6">Your booking request has been successfully saved. Our team will contact you shortly.</p>
+        <div className="flex flex-col gap-3">
+          <button 
+            onClick={() => router.push('/my-bookings')}
+            className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
+          >
+            View My Bookings
+          </button>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="glass p-8 rounded-3xl shadow-xl border border-white/40 sticky top-24">
-      <h3 className="text-2xl font-bold mb-6">Book This Tour</h3>
+    <div className="glass p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl border border-white/40 sticky top-24">
+      <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Book This Tour</h3>
       
-      <form onSubmit={handleBooking} className="space-y-6">
+      <form onSubmit={handleBooking} className="space-y-4 sm:space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-primary" />
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2 flex items-center gap-2">
+            <User className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-primary" />
+            <span>Full Name</span>
+          </label>
+          <input
+            type="text"
+            required
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2 flex items-center gap-2">
+            <Phone className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-primary" />
+            <span>Phone Number</span>
+          </label>
+          <input
+            type="tel"
+            required
+            placeholder="Enter phone number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2 flex items-center gap-2">
+            <Calendar className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-primary" />
             <span>Select Date</span>
           </label>
           <input
@@ -77,13 +113,13 @@ export default function BookingForm({ tourId, price }: { tourId: string, price: 
             min={new Date().toISOString().split('T')[0]}
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+            className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" />
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2 flex items-center gap-2">
+            <Users className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-primary" />
             <span>Number of Travelers</span>
           </label>
           <input
@@ -93,24 +129,24 @@ export default function BookingForm({ tourId, price }: { tourId: string, price: 
             required
             value={people}
             onChange={(e) => setPeople(parseInt(e.target.value))}
-            className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+            className="w-full bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 focus:ring-2 focus:ring-primary/50 text-xs sm:text-sm transition-all"
           />
         </div>
 
         <div className="pt-4 border-t border-gray-100 dark:border-slate-800">
-          <div className="flex justify-between items-center mb-6">
-            <span className="text-secondary font-medium">Total Price</span>
-            <span className="text-3xl font-extrabold text-primary">₹{price * people}</span>
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <span className="text-secondary font-medium text-sm sm:text-base">Total Price</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-primary">₹{price * people}</span>
           </div>
 
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          {error && <p className="text-red-500 text-[10px] sm:text-sm mb-4">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl font-bold flex items-center justify-center space-x-2 transition-all shadow-lg shadow-primary/25 disabled:opacity-50"
+            className="w-full bg-primary hover:bg-primary/90 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center space-x-2 transition-all shadow-lg shadow-primary/25 disabled:opacity-50"
           >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <span>Confirm Booking</span>}
+            {loading ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> : <span>Confirm Booking</span>}
           </button>
         </div>
       </form>

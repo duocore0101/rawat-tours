@@ -22,19 +22,27 @@ export default async function AdminToursPage() {
 
   return (
     <div className="min-h-screen bg-muted/20 pb-20">
-      <div className="bg-white dark:bg-slate-950 border-b border-gray-100 dark:border-slate-800 pt-12 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Manage Tours</h1>
-            <p className="text-secondary font-medium">Add, update or remove travel packages.</p>
-          </div>
+      <div className="bg-white dark:bg-slate-950 border-b border-gray-100 dark:border-slate-800 pt-12 pb-12 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
-            href="/admin/tours/new"
-            className="bg-primary text-white px-6 py-3 rounded-2xl font-bold flex items-center space-x-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20"
+            href="/admin" 
+            className="absolute top-4 left-4 sm:left-8 text-sm font-bold text-secondary hover:text-primary transition-colors flex items-center gap-2"
           >
-            <Plus className="h-5 w-5" />
-            <span>Add New</span>
+            ← Back to Dashboard
           </Link>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-4 gap-6">
+            <div>
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Manage Tours</h1>
+              <p className="text-sm sm:text-base text-secondary font-medium">Add, update or remove travel packages.</p>
+            </div>
+            <Link 
+              href="/admin/tours/new"
+              className="bg-primary text-white px-6 py-3 rounded-2xl font-bold flex items-center space-x-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 w-full md:w-auto justify-center"
+            >
+              <Plus className="h-5 w-5" />
+              <span>Add New</span>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -43,7 +51,12 @@ export default async function AdminToursPage() {
           {tours?.map((tour) => (
             <div key={tour.id} className="bg-white dark:bg-slate-900 rounded-3xl p-4 flex flex-col md:flex-row items-center gap-8 shadow-sm border border-gray-50 hover:shadow-md transition-all">
               <div className="relative h-32 w-full md:w-48 rounded-2xl overflow-hidden flex-shrink-0">
-                <Image src={tour.image_url} alt={tour.title} fill className="object-cover" />
+                <Image 
+                  src={tour.image_url?.split(',').find((u: string) => u && !u.includes('istockphoto.com')) || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'} 
+                  alt={tour.title} 
+                  fill 
+                  className="object-cover" 
+                />
               </div>
               
               <div className="flex-grow text-center md:text-left">

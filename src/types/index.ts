@@ -15,6 +15,8 @@ export interface Booking {
   tour_id: string
   date: string
   people: number
+  customer_name: string
+  customer_phone: string
   status: 'pending' | 'confirmed' | 'cancelled'
   created_at: string
   tour?: Tour

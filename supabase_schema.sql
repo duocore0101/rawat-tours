@@ -17,6 +17,8 @@ CREATE TABLE bookings (
   tour_id UUID REFERENCES tours(id) ON DELETE CASCADE,
   date DATE NOT NULL,
   people INTEGER NOT NULL DEFAULT 1,
+  customer_name TEXT,
+  customer_phone TEXT,
   status TEXT NOT NULL DEFAULT 'pending',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
