@@ -53,10 +53,7 @@ export default async function TourDetailsPage({ params }: { params: Promise<{ id
             </div>
             <h1 className="text-3xl sm:text-5xl md:text-8xl font-black text-white mb-4 sm:mb-6 tracking-tighter drop-shadow-2xl">{tour.title}</h1>
             <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-white/90">
-              <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border border-white/10">
-                <MapPin className="h-4 sm:h-5 w-4 sm:w-5 text-accent" />
-                <span className="font-bold uppercase tracking-wider text-[10px] sm:text-sm">{tour.location}</span>
-              </div>
+
               <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border border-white/10">
                 <Clock className="h-4 sm:h-5 w-4 sm:w-5 text-accent" />
                 <span className="font-bold text-[10px] sm:text-sm">{tour.duration} Experience</span>
