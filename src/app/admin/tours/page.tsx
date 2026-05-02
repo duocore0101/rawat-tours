@@ -63,10 +63,7 @@ export default async function AdminToursPage() {
               <div className="flex-grow text-center md:text-left">
                 <h3 className="text-xl font-bold mb-1">{tour.title}</h3>
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-secondary">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    <span>{tour.location}</span>
-                  </div>
+
                   <div className="flex items-center gap-1">
                     <DollarSign className="h-4 w-4 text-emerald-500" />
                     <span className="font-bold text-gray-900 dark:text-white">${tour.price}</span>

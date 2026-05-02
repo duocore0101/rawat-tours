@@ -96,10 +96,7 @@ export default function TourCard({ tour }: { tour: Tour }) {
       </div>
       
       <div className="p-3 sm:p-8">
-        <div className="flex items-center space-x-1 text-primary mb-1.5 sm:mb-3 text-[8px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] line-clamp-1">
-          <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
-          <span className="truncate">{tour.location}</span>
-        </div>
+
         
         <h3 className="text-base sm:text-2xl font-black text-gray-900 dark:text-white mb-2 sm:mb-4 line-clamp-1 group-hover:text-primary transition-colors tracking-tight">
           {tour.title}
