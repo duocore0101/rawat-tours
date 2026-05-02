@@ -9,7 +9,7 @@ export default function BookingForm({ tourId, price, tourTitle }: { tourId: stri
   const [date, setDate] = useState('')
   const [people, setPeople] = useState(1)
   const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState('+91')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -125,7 +125,6 @@ export default function BookingForm({ tourId, price, tourTitle }: { tourId: stri
           <input
             type="number"
             min="1"
-            max="10"
             required
             value={people}
             onChange={(e) => setPeople(parseInt(e.target.value))}
