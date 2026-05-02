@@ -1,12 +1,26 @@
 'use client'
 
 import { Search, MapPin } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=2071&auto=format&fit=crop",
+  "/hero_image.jpeg"
+]
 
 export default function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const router = useRouter()
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % HERO_IMAGES.length)
+    }, 5000) // Change image every 5 seconds
+
+    return () => clearInterval(timer)
+  }, [])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,16 +34,21 @@ export default function Hero() {
   return (
     <div className="relative min-h-[100dvh] md:min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background with overlay */}
-      <div 
-        className="absolute inset-0 z-0 scale-105 animate-slow-zoom"
-        style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=2071&auto=format&fit=crop")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-background dark:to-background" />
-      </div>
+      {HERO_IMAGES.map((image, index) => (
+        <div 
+          key={image}
+          className={`absolute inset-0 z-0 scale-105 transition-opacity duration-1000 ease-in-out ${
+            index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `url("${image}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-background dark:to-background" />
+        </div>
+      ))}
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-center text-white mt-16 md:mt-0">
         <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 mb-6 md:mb-8 animate-in fade-in zoom-in duration-1000">

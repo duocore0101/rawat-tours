@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Trash2, Edit, MapPin, DollarSign } from 'lucide-react'
+import { Plus, Edit, MapPin, DollarSign } from 'lucide-react'
 import Image from 'next/image'
+import DeleteTourButton from '@/components/DeleteTourButton'
 
 export default async function AdminToursPage() {
   const supabase = await createClient()
@@ -81,11 +82,7 @@ export default async function AdminToursPage() {
                   <Edit className="h-4 w-4" />
                   <span>Edit</span>
                 </Link>
-                {/* Delete logic would be a client component, but for simplicity we link to an action or use a client wrapper */}
-                <button className="flex-grow md:flex-none flex items-center justify-center gap-2 p-3 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-all font-bold">
-                  <Trash2 className="h-4 w-4" />
-                  <span>Delete</span>
-                </button>
+                <DeleteTourButton tourId={tour.id} />
               </div>
             </div>
           ))}
