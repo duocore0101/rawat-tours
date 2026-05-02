@@ -115,7 +115,7 @@ export default async function AdminDashboardPage() {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl overflow-hidden relative border border-gray-100">
                         <Image 
-                          src={tour.image_url?.split(',').find((u: string) => u && !u.includes('istockphoto.com')) || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'} 
+                          src={tour.image_url?.split(',').find((u: string) => u && !u.includes('istockphoto.com') && !u.toLowerCase().match(/\.(mp4|webm|mov|ogg)$/)) || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'} 
                           alt="" 
                           fill 
                           className="object-cover" 

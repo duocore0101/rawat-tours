@@ -92,7 +92,7 @@ export default async function ActiveBookingsPage() {
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden relative flex-shrink-0">
                             <Image 
-                              src={booking.tour?.image_url?.split(',')?.find((u: string) => u && !u.includes('istockphoto.com')) || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'} 
+                              src={booking.tour?.image_url?.split(',')?.find((u: string) => u && !u.includes('istockphoto.com') && !u.toLowerCase().match(/\.(mp4|webm|mov|ogg)$/)) || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'} 
                               alt={booking.tour?.title || 'Tour'} 
                               fill 
                               className="object-cover" 
