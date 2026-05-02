@@ -24,6 +24,8 @@ export default function WhatsAppButton({
   const handleClick = () => {
     const isPending = status === 'pending'
     
+    const qrLink = `${window.location.origin}/qr.jpeg`
+    
     const message = encodeURIComponent(
       `${isPending ? '⏳ *Booking Received (Pending)* ⏳' : '✅ *Booking Confirmed!* ✅'}\n\n` +
       `Hello *${customerName}*,\n` +
@@ -35,7 +37,7 @@ export default function WhatsAppButton({
       `${isPending 
         ? 'Your booking is currently *pending*. To secure your spot, please follow the payment instructions below.' 
         : 'Your booking is *officially confirmed*! We are excited to have you with us.'}\n\n` +
-      `${isPending ? '💳 *Payment Instructions:* \nTo confirm your booking, please pay the total amount using our QR code and send a screenshot of the payment here.\n\n' : ''}` +
+      `${isPending ? `💳 *Payment Instructions:* \nTo confirm your booking, please pay the total amount using our QR code: ${qrLink} \n\nAnd send a screenshot of the payment here.\n\n` : ''}` +
       `Thank you for choosing *Rawat Tours & Travels*!`
     )
     window.open(`https://wa.me/${customerPhone?.replace(/[^0-9]/g, '')}?text=${message}`, '_blank')
